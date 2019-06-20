@@ -769,7 +769,7 @@ The primary information contained in an `Intent` is the following:
     static final String EXTRA_GIGAWATTS = "com.example.EXTRA_GIGAWATTS";
     ```
 
-### Example explicit intent
+### explicit intent
 
 An explicit intent is one that you use to launch a specific app component, such as a particular activity or service in your app. To create an explicit intent, define the component name for the `Intent` object—all other intent properties are optional.
 
@@ -785,7 +785,7 @@ startService(downloadIntent);
 
 The `Intent(Context, Class)` constructor supplies the app `Context` and the component a `Class` object. As such, this intent explicitly starts the `DownloadService` class in the app.
 
-### Example implicit intent
+### implicit intent
 
 An implicit intent specifies an action that can invoke any app on the device able to perform the action. Using an implicit intent is useful when your app cannot perform the action, but other apps probably can and you'd like the user to pick which app to use.
 
@@ -805,6 +805,94 @@ if (sendIntent.resolveActivity(getPackageManager()) != null) {
     startActivity(sendIntent);
 }
 ```
+
+#### Receiving an implicit intent
+To advertise which implicit intents your app can receive, declare one or more intent filters for each of your app components with an `<intent-filter>` element in your **manifest file**.
+
+Each intent filter specifies the type of intents it accepts based on the intent's **action**, **data**, and **category**
+
+**An app component should declare separate filters for each unique job it can do**. For example, one activity in an image gallery app may have two filters: one filter to view an image, and another filter to edit an image. When the activity starts, it inspects the Intent and decides how to behave based on the information in the Intent (such as to show the editor controls or not).
+
+Inside the `intent-filter`, you can specify the type of intents to accept using one or more of these three elements:
+
+- `action`
+
+    Declares the intent action accepted, in the `name` attribute. The value must be the literal string value of an action, not the class constant.
+
+- `data`
+
+    Declares the type of data accepted, using one or more attributes that specify various aspects of the data URI (`scheme`, `host`, `port`, `path`) and MIME type.
+
+- `category`
+
+    Declares the intent category accepted, in the `name` attribute. The value must be the literal string value of an action, not the class constant.
+
+    > **Note:** Android automatically applies the CATEGORY_DEFAULT category to all implicit intents passed to startActivity() and startActivityForResult().  so to receive implicit intents, you *must include* the `CATEGORY_DEFAULT` category in the intent filter.
+
+An implicit intent is tested against a filter by comparing the intent to each of the three elements. **To be delivered to the component, the intent must pass all three tests**
+
+```xml
+<activity android:name="MainActivity">
+    <!-- This activity is the main entry, should appear in app launcher -->
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter>
+</activity>
+
+<activity android:name="ShareActivity">
+    <!-- This activity handles "SEND" actions with text data -->
+    <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <data android:mimeType="text/plain"/>
+    </intent-filter>
+    <!-- This activity also handles "SEND" and "SEND_MULTIPLE" with media data -->
+    <intent-filter>
+        <action android:name="android.intent.action.SEND"/>
+        <action android:name="android.intent.action.SEND_MULTIPLE"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <data android:mimeType="application/vnd.google.panorama360+jpg"/>
+        <data android:mimeType="image/*"/>
+        <data android:mimeType="video/*"/>
+    </intent-filter>
+</activity>
+```
+
+### intent resolution
+
+When the system receives an implicit intent to start an activity, it searches for the best activity for the intent by comparing it to intent filters based on three aspects:
+
+- Action.
+- Data (both URI and data type).
+- Category.
+
+**data test**
+
+Each `<data>` element can specify a **URI** structure and a data type (**MIME media type**). Each part of the URI is a separate attribute: `scheme`, `host`, `port`, and `path`:
+
+```
+<scheme>://<host>:<port>/<path>
+```
+
+The following example shows possible values for these attributes:
+
+```
+content://com.example.project:200/folder/subfolder/etc
+```
+
+In this URI, the scheme is `content`, the host is `com.example.project`, the port is `200`, and the path is `folder/subfolder/etc`.
+
+**rules**
+
+It passes the URI part of the test either if its URI matches a URI in the filter or if it has a `content:` or `file:` URI and the filter does not specify a URI.
+
+In other words, a component is presumed to support `content:` and `file:` data if its filter lists *only* a MIME type.
+
+**Note**
+
+- A path specification can contain a wildcard asterisk (*) to require only a partial match of the path name.
+- If an intent specifies a URI or MIME type, the data test will fail if there are no `<data>` elements in the `<intent-filter>`.
 
 ## Android Jetpack
 
