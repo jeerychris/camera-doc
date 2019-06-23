@@ -993,3 +993,9 @@ If you call `setRetainInstance(true)`, Android won’t destroy the Fragment on c
 
 - onDestroy() will not be called
 - onCreate() will not be called
+
+## android UI
+
+![android-ui](images/coursera-AndroidUI.png)
+
+more see `android-ui.md`
