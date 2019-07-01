@@ -1,7 +1,7 @@
 # Camera developer
 
 职责描述：
-1. 基于**三星AP SoC**芯片，开发智能手机等移动设备的软件解决方案，包括嵌入式系统（Linux，Android）的**Camera驱动/HAL开发**。
+1. 基于**SoC**芯片，开发智能手机等移动设备的软件解决方案，包括嵌入式系统（Linux，Android）的**Camera驱动/HAL开发**。
 2. 负责**Camera sensor点亮，camera HAL开发，摄像头方案问题调试**，对Camera系统进行性能及功耗优化。
 3. 客户支持：对客户基于上述解决方案开发的产品提供技术指导和现场支持。
 
