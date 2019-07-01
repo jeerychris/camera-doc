@@ -105,7 +105,7 @@ interfaces and packages. More broadly, HIDL is a system for communicating
 between codebases that may be compiled independently.
 
 HIDL is intended to be used for inter-process communication (IPC).
-Communication between processes is referred to as***Binderized***. For
+Communication between processes is referred to as ***Binderized***. For
 libraries that must be linked to a process, a **passthrough** mode is also
 available (not supported in Java).
 
